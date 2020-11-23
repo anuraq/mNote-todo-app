@@ -1,14 +1,16 @@
-package com.anuraq.mnote
+package com.anuraq.mnote.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.anuraq.mnote.MyOnClickListener
+import com.anuraq.mnote.R
+import com.anuraq.mnote.model.Task
 import kotlinx.android.synthetic.main.my_text_view.view.*
 
-class MyAdapter(private val myDataset: List<Task>) :
+class MyAdapter(private val myDataset: ArrayList<Task>) :
     RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 
     // Provide a reference to the views for each data item
@@ -22,7 +24,7 @@ class MyAdapter(private val myDataset: List<Task>) :
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): MyAdapter.MyViewHolder {
+    ): MyViewHolder {
         // create a new view
         val layout = LayoutInflater.from(parent.context)
             .inflate(R.layout.my_text_view, parent, false) as RelativeLayout

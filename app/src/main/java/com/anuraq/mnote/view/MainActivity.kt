@@ -10,7 +10,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
+import com.anuraq.mnote.adapters.MyAdapter
+import com.anuraq.mnote.model.DatabaseR
 
 class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         th.start()
         th.join()
 
-        val dataSS = DatabaseRUNa.getValue()
+        val dataSS = DatabaseRUNa.getValue() as ArrayList
 
         recyclerView = findViewById<RecyclerView>(R.id.rv).apply {
             // use this setting to improve performance if you know that changes
@@ -74,4 +75,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
