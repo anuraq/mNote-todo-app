@@ -1,4 +1,4 @@
-package com.anuraq.mnote
+package com.anuraq.mnote.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,27 +8,39 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.anuraq.mnote.R
 import com.anuraq.mnote.adapters.MyAdapter
-import com.anuraq.mnote.model.DatabaseR
+import com.anuraq.mnote.model.Task
+import com.anuraq.mnote.viewmodel.TaskViewModel
+import kotlinx.android.synthetic.main.custom_dialog.view.*
+import java.util.*
+import androidx.lifecycle.Observer
 
 class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewManager: RecyclerView.LayoutManager
+    private lateinit var NewData: List<Task>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val DatabaseRUNa: DatabaseR = DatabaseR(applicationContext)
 
-        val th:Thread = Thread(DatabaseRUNa)
+        val dataObserver = Observer<List<Task>> { Data ->
+            this.NewData = Data
+        }
 
-        th.start()
-        th.join()
+        val taskViewModel: TaskViewModel = TaskViewModel(application)
 
-        val dataSS = DatabaseRUNa.getValue() as ArrayList
+        var dataSS: LiveData<List<Task>> = taskViewModel.getAll()
+
+        dataSS.observe(this, dataObserver)
+
+        dataSS = taskViewModel.getAll()
 
         recyclerView = findViewById<RecyclerView>(R.id.rv).apply {
             // use this setting to improve performance if you know that changes
@@ -39,7 +51,7 @@ class MainActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(application.applicationContext)
 
             // specify an viewAdapter (see also next example)
-            adapter = MyAdapter(dataSS)
+            adapter = MyAdapter(dataSS.value)
 
         }
 
@@ -69,6 +81,15 @@ class MainActivity : AppCompatActivity() {
 
             val alertDialog: AlertDialog = builder.create()
             alertDialog.show()
+
+            dialogView.buttonOk.setOnClickListener(View.OnClickListener {
+                val title: String = dialogView.title_edit.text.toString()
+                val desc: String = dialogView.desc_edit.text.toString()
+                val r: Random = Random()
+                taskViewModel.insert(Task(r.nextInt(), title, desc))
+                recyclerView.adapter?.notifyDataSetChanged()
+                alertDialog.hide()
+            })
             //Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
             //    .setAction("Action", null)
             //    .show()

@@ -8,47 +8,49 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import java.util.*
 
 @Database(entities = arrayOf(Task::class), version = 1)
-public abstract class AppDatabase : RoomDatabase() {
+abstract class AppDatabase : RoomDatabase() {
     //abstract fun taskDao(): TaskDao
-    private lateinit var instance: AppDatabase
-    val DATABASE_NAME = "task_db"
-
-    private val prePopulateCallback: Callback = object : Callback() {
-        override fun onCreate(db: SupportSQLiteDatabase) {
-            super.onCreate(db)
-            Thread(PrePopulateDatabase(instance)).start()
+    companion object {
+        val DATABASE_NAME = "tasks_db"
+        private var instance: AppDatabase? = null
+        private val prePopulateCallback: Callback = object : Callback() {
+            override fun onCreate(db: SupportSQLiteDatabase) {
+                super.onCreate(db)
+                Thread(PrePopulateDatabase(instance as AppDatabase)).start()
+            }
         }
-    }
 
-
-    @Synchronized
-    open fun getInstance(context: Context): AppDatabase? {
-        if (instance == null) {
-            instance = Room.databaseBuilder(
-                context.applicationContext,
-                AppDatabase::class.java, DATABASE_NAME
-            )
-                .addCallback(prePopulateCallback)
-                .allowMainThreadQueries()
-                .fallbackToDestructiveMigration()
-                .build()
+        @Synchronized
+        fun getInstance(context: Context): AppDatabase {
+            if (instance == null) {
+                instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java, DATABASE_NAME
+                )
+                    .addCallback(prePopulateCallback)
+                    .allowMainThreadQueries()
+                    .fallbackToDestructiveMigration()
+                    .build()
+            }
+            return instance as AppDatabase
         }
-        return instance
     }
 
     abstract fun taskDao(): TaskDao
 
-    private class PrePopulateDatabase internal constructor(dataBase: AppDatabase) : Runnable {
-        private val taskDao: TaskDao = TODO()
+    private class PrePopulateDatabase : Runnable {
+        private var taskDao: TaskDao
+
+        constructor( dataBase: AppDatabase){
+            taskDao = dataBase.taskDao()
+        }
+
         override fun run() {
             val r: Random = Random()
             taskDao.insert(Task( r.nextInt(),"Anurag", "xakejdgbfe"))
             taskDao.insert(Task( r.nextInt(),"Aditya", "tyrtyrjgbfe"))
         }
 
-        init {
-            taskDao = dataBase.taskDao()
-        }
     }
 
 }

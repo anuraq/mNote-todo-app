@@ -23,7 +23,7 @@ class DatabaseR(val cont: Context) : Runnable {
     }
 
     fun getValue(): List<Task> {
-        dataSS = db.taskDao().getAll()
+        //dataSS = db.taskDao().getAll()
         return dataSS
     }
 }

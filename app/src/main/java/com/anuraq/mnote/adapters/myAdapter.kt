@@ -10,7 +10,7 @@ import com.anuraq.mnote.R
 import com.anuraq.mnote.model.Task
 import kotlinx.android.synthetic.main.my_text_view.view.*
 
-class MyAdapter(private val myDataset: ArrayList<Task>) :
+class MyAdapter(private val myDataset: List<Task>?) :
     RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 
     // Provide a reference to the views for each data item
@@ -41,10 +41,15 @@ class MyAdapter(private val myDataset: ArrayList<Task>) :
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.layout.title.text = myDataset[position].title.toString()
-        holder.layout.info.text = myDataset[position].desc.toString()
+        holder.layout.title.text = myDataset?.get(position)?.title.toString()
+        holder.layout.info.text = myDataset?.get(position)?.desc.toString()
     }
 
     // Return the size of your dataset (invoked by the layout manager)
-    override fun getItemCount() = myDataset.size
+    override fun getItemCount(): Int {
+        if(myDataset == null)
+            return 0
+        else
+            return myDataset.size
+    }
 }
