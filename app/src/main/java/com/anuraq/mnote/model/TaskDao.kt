@@ -9,7 +9,7 @@ import androidx.room.Query
 @Dao
 interface TaskDao {
     @Query("SELECT * FROM task")
-    fun getAll(): LiveData<List<Task>>
+    fun getAll(): List<Task>
 
     @Insert
     fun insertAll(vararg tasks: Task)

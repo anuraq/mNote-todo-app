@@ -7,7 +7,7 @@ import com.anuraq.mnote.model.Task
 import com.anuraq.mnote.model.TaskDao
 
 class TaskRepository {
-    private lateinit var taskDao: TaskDao
+    private var taskDao: TaskDao
     private lateinit var allSubjects: LiveData<List<Task>>
 
     constructor(application: Application){
@@ -28,7 +28,7 @@ class TaskRepository {
 
     fun insert(t: Task) { taskDao.insert(t) }
 
-    fun getAll(): LiveData<List<Task>> { return taskDao.getAll() }
+    fun getAll(): List<Task> { return taskDao.getAll() }
 
     fun delete(t: Task) { taskDao.delete(t) }
 

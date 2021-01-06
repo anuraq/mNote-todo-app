@@ -1,6 +1,7 @@
 package com.anuraq.mnote.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,25 +23,31 @@ import androidx.lifecycle.Observer
 
 class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
-    private lateinit var viewManager: RecyclerView.LayoutManager
-    private lateinit var NewData: List<Task>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
 
-        val dataObserver = Observer<List<Task>> { Data ->
-            this.NewData = Data
-        }
+//        val dataObserver = Observer<List<Task>> { Data ->
+//            this.NewData = Data
+//        }
 
-        val taskViewModel: TaskViewModel = TaskViewModel(application)
+        val taskViewModel = TaskViewModel(application)
 
-        var dataSS: LiveData<List<Task>> = taskViewModel.getAll()
+        var newData: List<Task>? = taskViewModel.allTasks.value
 
-        dataSS.observe(this, dataObserver)
+        taskViewModel.allTasks.observe(this, { data ->
+            newData = data
+        })
 
-        dataSS = taskViewModel.getAll()
+        Log.d("M - NOTE", newData.toString())
+
+//        var dataSS: LiveData<List<Task>> = taskViewModel.getAll()
+//
+//        dataSS.observe(this, dataObserver)
+
+//        dataSS = taskViewModel.getAll()
 
         recyclerView = findViewById<RecyclerView>(R.id.rv).apply {
             // use this setting to improve performance if you know that changes
@@ -51,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(application.applicationContext)
 
             // specify an viewAdapter (see also next example)
-            adapter = MyAdapter(dataSS.value)
+            adapter = MyAdapter(newData)
 
         }
 
